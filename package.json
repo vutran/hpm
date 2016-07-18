@@ -1,7 +1,7 @@
 {
   "name": "hpm-cli",
   "version": "0.2.0",
-  "description": "A package manager for HyperTerm",
+  "description": "A plugin manager for HyperTerm",
   "main": "index.js",
   "scripts": {
     "test": "xo && ava"
