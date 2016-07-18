@@ -4,14 +4,22 @@
   "description": "A package manager for HyperTerm",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "xo && ava"
   },
+	"bin": {
+		"hpm": "index.js"
+	},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/matheuss/hpm.git"
   },
   "keywords": [
-    "hyperterm"
+    "hyperterm",
+		"package",
+		"manager",
+		"terminal",
+		"cli",
+		"🦁"
   ],
   "author": {
     "name": "Matheus Fernandes",
@@ -22,5 +30,16 @@
   "bugs": {
     "url": "https://github.com/matheuss/hpm/issues"
   },
-  "homepage": "https://github.com/matheuss/hpm#readme"
+  "homepage": "https://github.com/matheuss/hpm#readme",
+  "dependencies": {
+    "chalk": "^1.1.3",
+    "commander": "^2.9.0",
+    "file-exists": "^1.0.0",
+    "npm-name": "^3.0.0",
+    "pify": "^2.3.0"
+  },
+  "devDependencies": {
+    "ava": "^0.15.2",
+    "xo": "^0.16.0"
+  }
 }
