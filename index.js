@@ -11,7 +11,7 @@ updateNotifier({pkg}).notify();
 
 program
   .version(pkg.version)
-  .option('install <plugin>', 'Install a plugin')
+  .option('i, install <plugin>', 'Install a plugin')
   .parse(process.argv);
 
 if (!hyperTerm.exists()) {
