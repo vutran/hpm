@@ -22,10 +22,6 @@ if (!hyperTerm.exists()) {
 
 if (program.install) {
 	const plugin = program.install;
-	// if (hyperTerm.isInstalled(plugin)) {
-		// console.error(chalk.red(`${plugin} is already installed :)`));
-		// process.exit(1);
-	// }
 	npmName(plugin).then(available => {
 		if (available) {
 			console.error(chalk.red(`${plugin} not found on npm`));
