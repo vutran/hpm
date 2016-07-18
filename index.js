@@ -40,3 +40,5 @@ if (program.install) {
 			});
 	});
 }
+
+program.help();
