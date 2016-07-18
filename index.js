@@ -2,9 +2,12 @@
 const chalk = require('chalk');
 const npmName = require('npm-name');
 const program = require('commander');
+const updateNotifier = require('update-notifier');
 
 const hyperTerm = require('./hyperterm');
 const pkg = require('./package');
+
+updateNotifier({pkg}).notify();
 
 program
   .version(pkg.version)

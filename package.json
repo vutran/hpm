@@ -1,25 +1,25 @@
 {
   "name": "hpm-cli",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A package manager for HyperTerm",
   "main": "index.js",
   "scripts": {
     "test": "xo && ava"
   },
-	"bin": {
-		"hpm": "index.js"
-	},
+  "bin": {
+    "hpm": "index.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/matheuss/hpm.git"
   },
   "keywords": [
     "hyperterm",
-		"package",
-		"manager",
-		"terminal",
-		"cli",
-		"🦁"
+    "package",
+    "manager",
+    "terminal",
+    "cli",
+    "🦁"
   ],
   "author": {
     "name": "Matheus Fernandes",
@@ -36,7 +36,8 @@
     "commander": "^2.9.0",
     "file-exists": "^1.0.0",
     "npm-name": "^3.0.0",
-    "pify": "^2.3.0"
+    "pify": "^2.3.0",
+    "update-notifier": "^1.0.2"
   },
   "devDependencies": {
     "ava": "^0.15.2",
