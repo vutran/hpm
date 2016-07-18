@@ -44,6 +44,23 @@ function install(plugin) {
 function getLastInstalledPlugin() {
 	return contents.plugins[contents.plugins.length - 1];
 }
+
+function uninstall(plugin) {
+	return new Promise((resolve, reject) => {
+		if (!isInstalled(plugin)) {
+			return reject('NOT_INSTALLED');
+		}
+
+		const regex = new RegExp(`,?\\s?'${plugin}',?\\s?`);
+		pify(fs.readFile)(fileName, 'utf8')
+			.then(data => data.replace(regex, ''))
+			.then(data => pify(fs.writeFile)(fileName, data, 'utf8'))
+			.then(resolve)
+			.catch(err => reject(err));
+	});
+}
+
 module.exports.exists = exists;
 module.exports.isInstalled = isInstalled;
 module.exports.install = install;
+module.exports.uninstall = uninstall;

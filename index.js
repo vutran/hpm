@@ -13,6 +13,7 @@ updateNotifier({pkg}).notify();
 program
   .version(pkg.version)
   .option('i, install <plugin>', 'Install a plugin')
+  .option('u, uninstall <plugin>', 'Uninstall a plugin')
   .parse(process.argv);
 
 if (!hyperTerm.exists()) {
@@ -40,6 +41,19 @@ if (program.install) {
 				}
 			});
 	});
+}
+
+if (program.uninstall) {
+	const plugin = program.uninstall;
+	return hyperTerm.uninstall(plugin)
+		.then(() => console.log(chalk.green(`${plugin} uninstalled successfully!`)))
+		.catch(err => {
+			if (err === 'NOT_INSTALLED') {
+				console.error(chalk.red(`${plugin} is not installed`));
+			} else {
+				throw err;
+			}
+		});
 }
 
 program.help();

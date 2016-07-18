@@ -19,12 +19,13 @@ npm install -g hpm-cli
 
   Options:
 
-    -h, --help        output usage information
-    -V, --version     output the version number
-    install <plugin>  Install a plugin
+    -h, --help             output usage information
+    -V, --version          output the version number
+    i, install <plugin>    Install a plugin
+    u, uninstall <plugin>  Uninstall a plugin
 ```
 
 ## Upcoming
-- [ ] `hpm unistall <plugin>`
+- [x] `hpm unistall <plugin>`
 - [ ] `hpm ls`
 - [ ] `hpm search <query>`
