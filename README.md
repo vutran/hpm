@@ -23,9 +23,10 @@ npm install -g hpm-cli
     -V, --version          output the version number
     i, install <plugin>    Install a plugin
     u, uninstall <plugin>  Uninstall a plugin
+    ls                     List installed plugins
 ```
 
 ## Upcoming
 - [x] `hpm unistall <plugin>`
-- [ ] `hpm ls`
+- [x] `hpm ls`
 - [ ] `hpm search <query>`

@@ -14,6 +14,7 @@ program
   .version(pkg.version)
   .option('i, install <plugin>', 'Install a plugin')
   .option('u, uninstall <plugin>', 'Uninstall a plugin')
+  .option('ls', 'List installed plugins')
   .parse(process.argv);
 
 if (!hyperTerm.exists()) {
@@ -54,6 +55,17 @@ if (program.uninstall) {
 				throw err;
 			}
 		});
+}
+
+if (program.ls) {
+	let plugins = hyperTerm.list();
+
+	if (plugins) {
+		console.log(plugins);
+	} else {
+		console.log(chalk.red(`No plugins installed yet.`));
+	}
+	process.exit(1);
 }
 
 program.help();
