@@ -60,7 +60,17 @@ function uninstall(plugin) {
 	});
 }
 
+function list() {
+	let plugins = contents.plugins;
+
+	if (Array.isArray(plugins) && plugins.length > 0) {
+		return plugins.join('\n');
+	}
+	return false;
+}
+
 module.exports.exists = exists;
 module.exports.isInstalled = isInstalled;
 module.exports.install = install;
 module.exports.uninstall = uninstall;
+module.exports.list = list;
