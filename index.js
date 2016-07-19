@@ -14,7 +14,7 @@ program
   .version(pkg.version)
   .option('i, install <plugin>', 'Install a plugin')
   .option('u, uninstall <plugin>', 'Uninstall a plugin')
-  .option('ls', 'List installed plugins')
+  .option('ls, list', 'List installed plugins')
   .parse(process.argv);
 
 if (!hyperTerm.exists()) {
@@ -57,7 +57,7 @@ if (program.uninstall) {
 		});
 }
 
-if (program.ls) {
+if (program.list) {
 	let plugins = hyperTerm.list();
 
 	if (plugins) {
