@@ -13,7 +13,7 @@ updateNotifier({pkg}).notify();
 program
   .version(pkg.version)
   .option('i, install <plugin>', 'Install a plugin')
-  .option('u, uninstall <plugin>', 'Uninstall a plugin')
+  .option('u, uninstall <plugin>', 'Uninstall a plugin (aliases: rm, remove)')
   .option('ls, list', 'List installed plugins')
   .parse(process.argv);
 
@@ -44,6 +44,9 @@ if (program.install) {
 	});
 }
 
+if (['rm', 'remove'].indexOf(program.args[0]) !== -1) {
+	program.uninstall = program.args[1];
+}
 if (program.uninstall) {
 	const plugin = program.uninstall;
 	return hyperTerm.uninstall(plugin)
