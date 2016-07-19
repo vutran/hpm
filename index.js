@@ -11,11 +11,11 @@ const pkg = require('./package');
 updateNotifier({pkg}).notify();
 
 program
-  .version(pkg.version)
-  .option('i, install <plugin>', 'Install a plugin')
-  .option('u, uninstall <plugin>', 'Uninstall a plugin (aliases: rm, remove)')
-  .option('ls, list', 'List installed plugins')
-  .parse(process.argv);
+	.version(pkg.version)
+	.option('i, install <plugin>', 'Install a plugin')
+	.option('u, uninstall <plugin>', 'Uninstall a plugin (aliases: rm, remove)')
+	.option('ls, list', 'List installed plugins')
+	.parse(process.argv);
 
 if (!hyperTerm.exists()) {
 	let msg = chalk.red('You don\'t have HyperTerm installed! :(\n');
