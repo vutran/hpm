@@ -1,14 +1,19 @@
 import {homedir} from 'os';
 
 import test from 'ava';
+import mockFs from 'mock-fs';
 
-require('mock-fs')({
+mockFs({
 	[`${homedir()}/.hyperterm.js`]: 'module.exports = {plugins: []};'
 });
 require('mock-require')(`${require('os').homedir()}/.hyperterm.js`, './_hyperterm-mocker');
 
 const api = require('../hyperterm');
 const hyperTermMocker = require('./_hyperterm-mocker');
+
+test.after(() => {
+	mockFs.restore();
+});
 
 test('check if hyperterm is installed', t => {
 	t.true(api.exists());
