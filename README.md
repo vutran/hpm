@@ -27,6 +27,11 @@ npm install -g hpm-cli
 ```
 
 ## Upcoming
+- [ ] Bulk commands (e.g. `hpm i hyperpower hyperyellow`
+- [ ] `hpm help` 
+- [ ] `hpm search <query>`
 - [x] `hpm unistall <plugin>`
 - [x] `hpm ls`
-- [ ] `hpm search <query>`
+
+## Maybe
+- [ ] `hpm init` (or something like that) that downloads HyperTerm for you
