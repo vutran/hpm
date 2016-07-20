@@ -39,6 +39,8 @@ if (program.install) {
 			.catch(err => {
 				if (err === 'ALREADY_INSTALLED') {
 					console.error(chalk.red(`${plugin} is already installed`));
+				} else {
+					throw err;
 				}
 			});
 	});
