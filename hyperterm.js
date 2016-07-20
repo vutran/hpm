@@ -10,7 +10,9 @@ let contents;
 try {
 	contents = require(fileName);
 } catch (err) {
-	throw err;
+	if (err.code !== 'MODULE_NOT_FOUND') {
+		throw err;
+	}
 }
 
 function exists() {
