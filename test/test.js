@@ -30,9 +30,16 @@ test.serial('install a plugin', t => {
 	});
 });
 
+test.serial('install another plugin', t => {
+	return api.install('🦄').then(() => {
+		hyperTermMocker.install('🦄');
+		t.true(api.isInstalled('🦄'));
+	});
+});
+
 test.serial('list installed plugins', t => {
 	const list = api.list();
-	t.is(list, '🦁');
+	t.is(list, '🦁\n🦄');
 });
 
 test.serial('try to install a plugin that is already installed', async t => {
@@ -47,7 +54,19 @@ test.serial('uninstall a plugin', t => {
 	});
 });
 
+test.serial('uninstall another plugin', t => {
+	return api.uninstall('🦄').then(() => {
+		hyperTermMocker.uninstall('🦄');
+		t.false(api.isInstalled('🦄'));
+	});
+});
+
 test.serial('try to unistall a plugin that is not installed', async t => {
 	const err = await t.throws(api.uninstall('🦁'));
 	t.is(err, 'NOT_INSTALLED');
+});
+
+test.serial('list installed plugins when no plugin is ', t => {
+	const list = api.list();
+	t.false(list);
 });
