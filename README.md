@@ -27,8 +27,8 @@ npm install -g hpm-cli
 ```
 
 ## Upcoming
-- [ ] Bulk commands (e.g. `hpm i hyperpower hyperyellow`
-- [ ] `hpm help` 
+- [ ] Bulk commands (e.g. `hpm i hyperpower hyperyellow`)
+- [ ] `hpm help`
 - [ ] `hpm search <query>`
 - [x] `hpm unistall <plugin>`
 - [x] `hpm ls`
