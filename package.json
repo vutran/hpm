@@ -9,6 +9,10 @@
   "bin": {
     "hpm": "index.js"
   },
+  "files": [
+    "hyperterm.js",
+    "index.js"
+  ]
   "repository": {
     "type": "git",
     "url": "git+https://github.com/matheuss/hpm.git"
