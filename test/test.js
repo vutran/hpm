@@ -2,14 +2,34 @@ import {homedir} from 'os';
 
 import test from 'ava';
 import mockFs from 'mock-fs';
+import isCi from 'is-ci';
 
-mockFs({
-	[`${homedir()}/.hyperterm.js`]: 'module.exports = {plugins: []};'
-});
-require('mock-require')(`${require('os').homedir()}/.hyperterm.js`, './_hyperterm-mocker');
-
-const api = require('../hyperterm');
+let api = require('../hyperterm');
 const hyperTermMocker = require('./_hyperterm-mocker');
+
+test.before(async t => {
+	if (api.exists() && !isCi()) {
+		// it is ok to have HyperTerm if you are not Travis
+	} else {
+		// Travis can't have HyperTerm
+		t.is(false, api.exists());
+		await t.throws(api.install('🦁'));
+		await t.throws(api.uninstall('🦁'));
+	}
+
+	// if !isCi(), we need to mock the files because they do not exist.
+	// if  isCi(), we need to mock the files to do not spoil the config
+	require('mock-require')(`${require('os').homedir()}/.hyperterm.js`, './_hyperterm-mocker');
+
+	mockFs({
+		[`${homedir()}/.hyperterm.js`]: 'module.exports = {plugins: []};'
+	});
+
+	delete require.cache[require.resolve('../hyperterm')];
+	api = require('../hyperterm');
+
+	t.is(true, api.exists());
+});
 
 test.after(() => {
 	mockFs.restore();
