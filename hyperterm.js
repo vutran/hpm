@@ -20,7 +20,10 @@ function exists() {
 }
 
 function isInstalled(plugin) {
-	return contents.plugins.indexOf(plugin) > -1;
+	if (contents && Array.isArray(contents.plugins)) {
+		return contents.plugins.indexOf(plugin) > -1;
+	}
+	return false;
 }
 
 function install(plugin) {
