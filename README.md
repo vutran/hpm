@@ -25,12 +25,13 @@ npm install -g hpm-cli
     i, install <plugin>    Install a plugin
     u, uninstall <plugin>  Uninstall a plugin (aliases: rm, remove)
     ls, list               List installed plugins
+    s, search <query>      Search for plugins on npm
 ```
 
 ## Upcoming
 - [ ] Bulk commands (e.g. `hpm i hyperpower hyperyellow`)
 - [ ] `hpm help`
-- [ ] `hpm search <query>`
+- [X] `hpm search <query>`
 - [x] `hpm unistall <plugin>`
 - [x] `hpm ls`
 
