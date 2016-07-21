@@ -26,6 +26,7 @@ npm install -g hpm-cli
     u, uninstall <plugin>  Uninstall a plugin (aliases: rm, remove)
     ls, list               List installed plugins
     s, search <query>      Search for plugins on npm
+		ls-remote              List plugins available on npm
 ```
 
 ## Upcoming
