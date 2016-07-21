@@ -8,7 +8,7 @@ let api = require('../hyperterm');
 const hyperTermMocker = require('./_hyperterm-mocker');
 
 test.before(async t => {
-	if (api.exists() && !isCi()) {
+	if (api.exists() && !isCi) {
 		// it is ok to have HyperTerm if you are not Travis
 	} else {
 		// Travis can't have HyperTerm
