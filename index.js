@@ -19,6 +19,7 @@ program
 	.option('u, uninstall <plugin>', 'Uninstall a plugin (aliases: rm, remove)')
 	.option('ls, list', 'List installed plugins')
 	.option('s, search <query>', 'Search for plugins on npm')
+	.option('ls-remote', 'List plugins available on npm')
 	.parse(process.argv);
 
 if (!hyperTerm.exists()) {
@@ -109,6 +110,34 @@ if (program.search) {
 				msg = msg.substring(msg.indexOf('\n') + 1); // remove header
 				console.log(msg);
 			}
+		}).catch(err => {
+			spinner.stop();
+			console.error(`${chalk.red('✖')} Searching`);
+			console.error(chalk.red(err)); // TODO
+		});
+}
+
+// TODO this is almost the same code used on search – so it should be modularized
+if (program.lsRemote) {
+	const spinner = ora('Searching').start();
+	const URL = 'http://registry.npmjs.org/-/_view/byKeyword?startkey=[%22hyperterm%22]&endkey=[%22hyperterm%22,{}]&group_level=4';
+
+	return got(URL)
+		.then(response => JSON.parse(response.body).rows)
+		.then(entries => entries.map(entry => entry.key))
+		.then(entries => entries.map(entry => {
+			return {name: entry[1], description: entry[2]};
+		}))
+		.then(entries => entries.map(entry => {
+			entry.name = chalk.green(entry.name);
+			return entry;
+		}))
+		.then(entries => {
+			spinner.stop();
+			console.log(`${chalk.green('✔')} Searching`);
+			let msg = columnify(entries);
+			msg = msg.substring(msg.indexOf('\n') + 1); // remove header
+			console.log(msg);
 		}).catch(err => {
 			spinner.stop();
 			console.error(`${chalk.red('✖')} Searching`);
