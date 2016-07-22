@@ -8,7 +8,7 @@
     "coverage": "nyc report --reporter=text-lcov | coveralls && nyc report --reporter=text-lcov > coverage.lcov && codecov"
   },
   "bin": {
-    "hpm": "index.js"
+    "hpm": "./index.js"
   },
   "files": [
     "hyperterm.js",
