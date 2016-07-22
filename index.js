@@ -78,25 +78,32 @@ if (program.list) {
 	process.exit(1);
 }
 
-if (program.search) {
-	const spinner = ora('Searching').start();
+const lsRemote = () => { // note that no errors are catched by thif function
 	const URL = 'http://registry.npmjs.org/-/_view/byKeyword?startkey=[%22hyperterm%22]&endkey=[%22hyperterm%22,{}]&group_level=4';
-	const query = program.search.toLowerCase();
 
 	return got(URL)
 		.then(response => JSON.parse(response.body).rows)
 		.then(entries => entries.map(entry => entry.key))
-		.then(response => response.filter(entry => {
-			return entry[1].indexOf(query) !== -1 || // name
-							entry[2].toLowerCase().indexOf(query) !== -1; // description
-		}))
 		.then(entries => entries.map(entry => {
 			return {name: entry[1], description: entry[2]};
 		}))
 		.then(entries => entries.map(entry => {
 			entry.name = chalk.green(entry.name);
 			return entry;
-		}))
+		}));
+};
+
+if (program.search) {
+	const spinner = ora('Searching').start();
+	const query = program.search.toLowerCase();
+
+	return lsRemote(query)
+		.then(entries => {
+			return entries.filter(entry => {
+				return entry.name.indexOf(query) !== -1 ||
+					entry.description.toLowerCase().indexOf(query) !== -1;
+			});
+		})
 		.then(entries => {
 			spinner.stop();
 			if (entries.length === 0) {
@@ -105,8 +112,9 @@ if (program.search) {
 				console.error(`${chalk.red('Try')} ${chalk.green('hpm ls-remote')}`);
 				process.exit(1);
 			} else {
-				console.log(`${chalk.green('✔')} Searching`);
 				let msg = columnify(entries);
+
+				console.log(`${chalk.green('✔')} Searching`);
 				msg = msg.substring(msg.indexOf('\n') + 1); // remove header
 				console.log(msg);
 			}
@@ -117,25 +125,16 @@ if (program.search) {
 		});
 }
 
-// TODO this is almost the same code used on search – so it should be modularized
 if (program.lsRemote) {
 	const spinner = ora('Searching').start();
-	const URL = 'http://registry.npmjs.org/-/_view/byKeyword?startkey=[%22hyperterm%22]&endkey=[%22hyperterm%22,{}]&group_level=4';
 
-	return got(URL)
-		.then(response => JSON.parse(response.body).rows)
-		.then(entries => entries.map(entry => entry.key))
-		.then(entries => entries.map(entry => {
-			return {name: entry[1], description: entry[2]};
-		}))
-		.then(entries => entries.map(entry => {
-			entry.name = chalk.green(entry.name);
-			return entry;
-		}))
+	return lsRemote()
 		.then(entries => {
+			let msg = columnify(entries);
+
 			spinner.stop();
 			console.log(`${chalk.green('✔')} Searching`);
-			let msg = columnify(entries);
+
 			msg = msg.substring(msg.indexOf('\n') + 1); // remove header
 			console.log(msg);
 		}).catch(err => {
