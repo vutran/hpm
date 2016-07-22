@@ -43,6 +43,7 @@
     "file-exists": "^1.0.0",
     "got": "^6.3.0",
     "npm-name": "^3.0.0",
+    "opn": "^4.0.2",
     "ora": "^0.2.3",
     "pify": "^2.3.0",
     "update-notifier": "^1.0.2"

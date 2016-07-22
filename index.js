@@ -4,6 +4,7 @@ const chalk = require('chalk');
 const columnify = require('columnify');
 const got = require('got');
 const npmName = require('npm-name');
+const opn = require('opn');
 const ora = require('ora');
 const program = require('commander');
 const updateNotifier = require('update-notifier');
@@ -20,6 +21,7 @@ program
 	.option('ls, list', 'List installed plugins')
 	.option('s, search <query>', 'Search for plugins on npm')
 	.option('ls-remote', 'List plugins available on npm')
+	.option('d, docs <plugin>', 'Open the npm page of the <plguin>')
 	.parse(process.argv);
 
 if (!hyperTerm.exists()) {
@@ -142,6 +144,10 @@ if (program.lsRemote) {
 			console.error(`${chalk.red('✖')} Searching`);
 			console.error(chalk.red(err)); // TODO
 		});
+}
+
+if (program.docs) {
+	return opn(`https://npmjs.com/package/${program.docs}`, {wait: false});
 }
 
 program.help();
