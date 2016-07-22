@@ -3,7 +3,7 @@
 
 ✨ A plugin manager for HyperTerm ✨
 
-<img src="screenshot.gif" width="629">
+<img src="https://raw.githubusercontent.com/matheuss/hpm/master/screenshot.gif?v=2" width="629">
 
 ## Install
 
