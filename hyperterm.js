@@ -1,4 +1,7 @@
 'use strict';
+// require('mock-fs')({
+// 	[`/Users/matheus/.hyperterm.js`]: 'module.exports = {plugins: []};'
+// });
 const fs = require('fs');
 const os = require('os');
 
@@ -13,6 +16,7 @@ let plugins;
 
 try {
 	fileContents = fs.readFileSync(fileName, 'utf8');
+
 	parsedFile = recast.parse(fileContents);
 
 	const properties = parsedFile.program.body[0].expression.right.properties;

@@ -1,9 +1,13 @@
 import {homedir} from 'os';
+import {writeFile} from 'fs';
 
 import test from 'ava';
 import mockFs from 'mock-fs';
 import isCi from 'is-ci';
+import pify from 'pify';
 
+const fileName = `${homedir()}/.hyperterm.js`;
+const fileContent = 'module.exports = {plugins: []};';
 let api = require('../hyperterm');
 
 test.before(async t => {
@@ -14,16 +18,18 @@ test.before(async t => {
 		t.is(false, api.exists());
 		await t.throws(api.install('🦁'));
 		await t.throws(api.uninstall('🦁'));
+
+		// no clue on why this is necessary, but mockFs is not working correctly if
+		// the file does not exists – SEE COMMENT BELOW (???)
+		await pify(writeFile)(fileName, fileContent, 'utf-8');
 	}
 
-	// if !isCi(), we need to mock the files because they do not exist.
+	// if !isCi(), we need to mock the file because it does not exist – SEE COMMENT ABOVE (???)
 	// if  isCi(), we need to mock the files to do not spoil the config
-
-	mockFs({
-		[`${homedir()}/.hyperterm.js`]: 'module.exports = {plugins: []};'
+	require('mock-fs')({
+		fileName: fileContent
 	});
 
-	delete require.cache[require.resolve('../hyperterm')];
 	delete require.cache[require.resolve('../hyperterm')];
 	api = require('../hyperterm');
 
