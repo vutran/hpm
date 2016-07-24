@@ -5,7 +5,6 @@ import mockFs from 'mock-fs';
 import isCi from 'is-ci';
 
 let api = require('../hyperterm');
-const hyperTermMocker = require('./_hyperterm-mocker');
 
 test.before(async t => {
 	if (api.exists() && !isCi) {
@@ -19,12 +18,12 @@ test.before(async t => {
 
 	// if !isCi(), we need to mock the files because they do not exist.
 	// if  isCi(), we need to mock the files to do not spoil the config
-	require('mock-require')(`${require('os').homedir()}/.hyperterm.js`, './_hyperterm-mocker');
 
 	mockFs({
 		[`${homedir()}/.hyperterm.js`]: 'module.exports = {plugins: []};'
 	});
 
+	delete require.cache[require.resolve('../hyperterm')];
 	delete require.cache[require.resolve('../hyperterm')];
 	api = require('../hyperterm');
 
@@ -45,21 +44,19 @@ test.serial('check if a plugin is not installed', t => {
 
 test.serial('install a plugin', t => {
 	return api.install('🦁').then(() => {
-		hyperTermMocker.install('🦁');
 		t.true(api.isInstalled('🦁'));
 	});
 });
 
 test.serial('install another plugin', t => {
 	return api.install('🦄').then(() => {
-		hyperTermMocker.install('🦄');
 		t.true(api.isInstalled('🦄'));
 	});
 });
 
 test.serial('list installed plugins', t => {
 	const list = api.list();
-	t.is(list, '🦁\n🦄');
+	t.true(list.endsWith('🦁\n🦄'));
 });
 
 test.serial('try to install a plugin that is already installed', async t => {
@@ -69,14 +66,12 @@ test.serial('try to install a plugin that is already installed', async t => {
 
 test.serial('uninstall a plugin', t => {
 	return api.uninstall('🦁').then(() => {
-		hyperTermMocker.uninstall('🦁');
 		t.false(api.isInstalled('🦁'));
 	});
 });
 
 test.serial('uninstall another plugin', t => {
 	return api.uninstall('🦄').then(() => {
-		hyperTermMocker.uninstall('🦄');
 		t.false(api.isInstalled('🦄'));
 	});
 });
@@ -84,9 +79,4 @@ test.serial('uninstall another plugin', t => {
 test.serial('try to unistall a plugin that is not installed', async t => {
 	const err = await t.throws(api.uninstall('🦁'));
 	t.is(err, 'NOT_INSTALLED');
-});
-
-test.serial('list installed plugins when no plugin is ', t => {
-	const list = api.list();
-	t.false(list);
 });
