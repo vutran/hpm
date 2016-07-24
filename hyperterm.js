@@ -1,29 +1,47 @@
 'use strict';
+// require('mock-fs')({
+// 	[`/Users/matheus/.hyperterm.js`]: 'module.exports = {plugins: []};'
+// });
 const fs = require('fs');
 const os = require('os');
 
 const pify = require('pify');
+const recast = require('recast');
 
 const fileName = `${os.homedir()}/.hyperterm.js`;
 
-let contents;
+let fileContents;
+let parsedFile;
+let plugins;
+
 try {
-	contents = require(fileName);
+	fileContents = fs.readFileSync(fileName, 'utf8');
+
+	parsedFile = recast.parse(fileContents);
+
+	const properties = parsedFile.program.body[0].expression.right.properties;
+	plugins = properties.find(property => {
+		return property.key.name === 'plugins';
+	}).value.elements;
 } catch (err) {
-	if (err.code !== 'MODULE_NOT_FOUND') {
+	if (err.code !== 'ENOENT') { // ENOENT === !exists()
 		throw err;
 	}
 }
 
 function exists() {
-	return contents !== undefined;
+	return fileContents !== undefined;
 }
 
 function isInstalled(plugin) {
-	if (contents && Array.isArray(contents.plugins)) {
-		return contents.plugins.indexOf(plugin) > -1;
+	if (plugin && plugins && Array.isArray(plugins)) {
+		return plugins.find(entry => entry.value === plugin) !== undefined;
 	}
 	return false;
+}
+
+function save() {
+	return pify(fs.writeFile)(fileName, recast.print(parsedFile).code, 'utf8');
 }
 
 function install(plugin) {
@@ -31,21 +49,10 @@ function install(plugin) {
 		if (isInstalled(plugin)) {
 			return reject('ALREADY_INSTALLED');
 		}
-		pify(fs.readFile)(fileName, 'utf8').then(data => {
-			const lastInstalledPlugin = getLastInstalledPlugin();
-			if (lastInstalledPlugin) {
-				return data.replace(`'${lastInstalledPlugin}'`,
-									`'${lastInstalledPlugin}', '${plugin}'`);
-			}
-			return data.replace('plugins: [],', `plugins: ['${plugin}'],`);
-		}).then(data => pify(fs.writeFile)(fileName, data, 'utf8'))
-			.then(resolve)
-			.catch(err => reject(err));
-	});
-}
 
-function getLastInstalledPlugin() {
-	return contents.plugins[contents.plugins.length - 1];
+		plugins.push(recast.types.builders.literal(plugin));
+		save().then(resolve).catch(err => reject(err));
+	});
 }
 
 function uninstall(plugin) {
@@ -54,20 +61,14 @@ function uninstall(plugin) {
 			return reject('NOT_INSTALLED');
 		}
 
-		const regex = new RegExp(`,?\\s?'${plugin}',?\\s?`);
-		pify(fs.readFile)(fileName, 'utf8')
-			.then(data => data.replace(regex, ''))
-			.then(data => pify(fs.writeFile)(fileName, data, 'utf8'))
-			.then(resolve)
-			.catch(err => reject(err));
+		plugins = plugins.filter(entry => entry.value !== plugin);
+		save().then(resolve).catch(err => reject(err));
 	});
 }
 
 function list() {
-	let plugins = contents.plugins;
-
-	if (Array.isArray(plugins) && plugins.length > 0) {
-		return plugins.join('\n');
+	if (Array.isArray(plugins)) {
+		return plugins.map(plugin => plugin.value).join('\n');
 	}
 	return false;
 }
