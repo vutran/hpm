@@ -61,7 +61,8 @@ function uninstall(plugin) {
 			return reject('NOT_INSTALLED');
 		}
 
-		plugins = plugins.filter(entry => entry.value !== plugin);
+		const index = plugins.findIndex(entry => entry.value === plugin);
+		plugins.splice(index, 1);
 		save().then(resolve).catch(err => reject(err));
 	});
 }
