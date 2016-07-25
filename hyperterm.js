@@ -1,7 +1,4 @@
 'use strict';
-// require('mock-fs')({
-// 	[`/Users/matheus/.hyperterm.js`]: 'module.exports = {plugins: []};'
-// });
 const fs = require('fs');
 const os = require('os');
 
