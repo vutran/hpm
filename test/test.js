@@ -7,7 +7,7 @@ import isCi from 'is-ci';
 import pify from 'pify';
 
 const fileName = `${homedir()}/.hyperterm.js`;
-const fileContent = 'module.exports = {plugins: []};';
+const fileContent = 'module.exports = {plugins: [], localPlugins:[]};';
 let api = require('../hyperterm');
 
 test.before(async t => {
