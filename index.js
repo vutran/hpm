@@ -1,9 +1,15 @@
 #!/usr/bin/env node
 'use strict';
+const {rename, writeFileSync} = require('fs');
+const {homedir} = require('os');
+
 const chalk = require('chalk');
 const columnify = require('columnify');
+const execa = require('execa');
+const fileExists = require('file-exists');
 const got = require('got');
 const npmName = require('npm-name');
+const pify = require('pify');
 const opn = require('opn');
 const ora = require('ora');
 const program = require('commander');
@@ -22,6 +28,7 @@ program
 	.option('s, search <query>', 'Search for plugins on npm')
 	.option('ls-remote', 'List plugins available on npm')
 	.option('d, docs <plugin>', 'Open the npm page of the <plguin>')
+	.option('f, fork <plguin>', 'Forks a plugin from npm into your ~/.hyperterm_plugins/local')
 	.parse(process.argv);
 
 if (!hyperTerm.exists()) {
@@ -148,6 +155,47 @@ if (program.lsRemote) {
 
 if (program.docs) {
 	return opn(`https://npmjs.com/package/${program.docs}`, {wait: false});
+}
+
+if (program.fork) {
+	const spinner = ora('Installing').start();
+	const plugin = program.fork;
+	return npmName(plugin).then(available => {
+		if (available) {
+			spinner.stop();
+			console.error(`${chalk.red('✖')} Installing`);
+			console.error(chalk.red(`${plugin} not found on npm`));
+			process.exit(1);
+		}
+
+		if (hyperTerm.isInstalled(plugin, true)) {
+			spinner.stop();
+			console.error(`${chalk.red('✖')} Installing`);
+			console.error(chalk.red(`${plugin} is already installed locally`));
+			process.exit(1);
+		}
+
+		const folderName = `${homedir()}/.hyperterm_plugins/local`;
+		const fileName = `${folderName}/package.json`;
+		if (!fileExists(fileName)) {
+			writeFileSync(fileName, '{"name": "hpm-placeholder"}', 'utf-8');
+		}
+
+		execa('npm', ['i', plugin], {cwd: folderName})
+			.then(() => pify(rename)(`${folderName}/node_modules/${plugin}`, `${folderName}/${plugin}`))
+			.then(() => hyperTerm.install(plugin, true))
+			.then(() => {
+				spinner.stop();
+				console.log(`${chalk.green('✔')} Installing`);
+				console.log(chalk.green(`${plugin} installed locally successfully!`));
+				console.log(chalk.green(`Check ${folderName}/${plugin}`));
+			})
+			.catch(err => {
+				spinner.stop();
+				console.error(`${chalk.red('✖')} Installing`);
+				console.error(chalk.red(err)); // TODO
+			});
+	});
 }
 
 program.help();
