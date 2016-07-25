@@ -13,6 +13,7 @@ const fileName = `${os.homedir()}/.hyperterm.js`;
 let fileContents;
 let parsedFile;
 let plugins;
+let localPlugins;
 
 try {
 	fileContents = fs.readFileSync(fileName, 'utf8');
@@ -22,6 +23,10 @@ try {
 	const properties = parsedFile.program.body[0].expression.right.properties;
 	plugins = properties.find(property => {
 		return property.key.name === 'plugins';
+	}).value.elements;
+
+	localPlugins = properties.find(property => {
+		return property.key.name === 'localPlugins';
 	}).value.elements;
 } catch (err) {
 	if (err.code !== 'ENOENT') { // ENOENT === !exists()
@@ -33,9 +38,10 @@ function exists() {
 	return fileContents !== undefined;
 }
 
-function isInstalled(plugin) {
-	if (plugin && plugins && Array.isArray(plugins)) {
-		return plugins.find(entry => entry.value === plugin) !== undefined;
+function isInstalled(plugin, locally) {
+	const array = locally ? localPlugins : plugins;
+	if (array && Array.isArray(array)) {
+		return array.find(entry => entry.value === plugin) !== undefined;
 	}
 	return false;
 }
@@ -44,13 +50,14 @@ function save() {
 	return pify(fs.writeFile)(fileName, recast.print(parsedFile).code, 'utf8');
 }
 
-function install(plugin) {
+function install(plugin, locally) {
+	const array = locally ? localPlugins : plugins;
 	return new Promise((resolve, reject) => {
-		if (isInstalled(plugin)) {
+		if (isInstalled(plugin, locally)) {
 			return reject('ALREADY_INSTALLED');
 		}
 
-		plugins.push(recast.types.builders.literal(plugin));
+		array.push(recast.types.builders.literal(plugin));
 		save().then(resolve).catch(err => reject(err));
 	});
 }
