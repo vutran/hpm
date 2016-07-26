@@ -8,7 +8,6 @@ const columnify = require('columnify');
 const execa = require('execa');
 const fileExists = require('file-exists');
 const got = require('got');
-const npmName = require('npm-name');
 const pify = require('pify');
 const opn = require('opn');
 const ora = require('ora');
@@ -42,22 +41,9 @@ if (!hyperTerm.exists()) {
 
 if (program.install) {
 	const plugin = program.install;
-	return npmName(plugin).then(available => {
-		if (available) {
-			console.error(chalk.red(`${plugin} not found on npm`));
-			process.exit(1);
-		}
-
-		hyperTerm.install(plugin)
-			.then(() => console.log(chalk.green(`${plugin} installed successfully!`)))
-			.catch(err => {
-				if (err === 'ALREADY_INSTALLED') {
-					console.error(chalk.red(`${plugin} is already installed`));
-				} else {
-					throw err;
-				}
-			});
-	});
+	return hyperTerm.install(plugin)
+		.then(() => console.log(chalk.green(`${plugin} installed successfully!`)))
+		.catch(err => console.error(chalk.red(err)));
 }
 
 if (['rm', 'remove'].indexOf(program.args[0]) !== -1) {
@@ -160,14 +146,7 @@ if (program.docs) {
 if (program.fork) {
 	const spinner = ora('Installing').start();
 	const plugin = program.fork;
-	return npmName(plugin).then(available => {
-		if (available) {
-			spinner.stop();
-			console.error(`${chalk.red('✖')} Installing`);
-			console.error(chalk.red(`${plugin} not found on npm`));
-			process.exit(1);
-		}
-
+	return hyperTerm.existsOnNpm(plugin).then(() => {
 		if (hyperTerm.isInstalled(plugin, true)) {
 			spinner.stop();
 			console.error(`${chalk.red('✖')} Installing`);
@@ -195,6 +174,15 @@ if (program.fork) {
 				console.error(`${chalk.red('✖')} Installing`);
 				console.error(chalk.red(err)); // TODO
 			});
+	}).catch(err => {
+		spinner.stop();
+		console.error(`${chalk.red('✖')} Installing`);
+		if (err.code === 'NOT_FOUND_ON_NPM') {
+			console.error(chalk.red(err.message));
+		} else {
+			console.error(chalk.red(err));
+		}
+		process.exit(1);
 	});
 }
 

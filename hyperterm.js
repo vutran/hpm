@@ -2,6 +2,7 @@
 const fs = require('fs');
 const os = require('os');
 
+const npmName = require('npm-name');
 const pify = require('pify');
 const recast = require('recast');
 
@@ -47,22 +48,41 @@ function save() {
 	return pify(fs.writeFile)(fileName, recast.print(parsedFile).code, 'utf8');
 }
 
+function existsOnNpm(plugin) {
+	plugin = plugin.split('#')[0];
+	return npmName(plugin).then(available => {
+		if (available) {
+			const err = new Error(`${plugin} not found on npm`);
+			err.code = 'NOT_FOUND_ON_NPM';
+			throw err;
+		}
+	});
+}
+
 function install(plugin, locally) {
 	const array = locally ? localPlugins : plugins;
 	return new Promise((resolve, reject) => {
-		if (isInstalled(plugin, locally)) {
-			return reject('ALREADY_INSTALLED');
-		}
+		existsOnNpm(plugin).then(() => {
+			if (isInstalled(plugin, locally)) {
+				return reject(`${plugin} is already installed`);
+			}
 
-		array.push(recast.types.builders.literal(plugin));
-		save().then(resolve).catch(err => reject(err));
+			array.push(recast.types.builders.literal(plugin));
+			save().then(resolve).catch(err => reject(err));
+		}).catch(err => {
+			if (err.code === 'NOT_FOUND_ON_NPM') {
+				reject(err.message);
+			} else {
+				reject(err);
+			}
+		});
 	});
 }
 
 function uninstall(plugin) {
 	return new Promise((resolve, reject) => {
 		if (!isInstalled(plugin)) {
-			return reject('NOT_INSTALLED');
+			return reject(`${plugin} is not installed`);
 		}
 
 		const index = plugins.findIndex(entry => entry.value === plugin);
@@ -79,6 +99,7 @@ function list() {
 }
 
 module.exports.exists = exists;
+module.exports.existsOnNpm = existsOnNpm;
 module.exports.isInstalled = isInstalled;
 module.exports.install = install;
 module.exports.uninstall = uninstall;
