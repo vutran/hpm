@@ -45,44 +45,44 @@ test('check if hyperterm is installed', t => {
 });
 
 test.serial('check if a plugin is not installed', t => {
-	t.false(api.isInstalled('🦁'));
+	t.false(api.isInstalled('hyperpower'));
 });
 
 test.serial('install a plugin', t => {
-	return api.install('🦁').then(() => {
-		t.true(api.isInstalled('🦁'));
+	return api.install('hyperpower').then(() => {
+		t.true(api.isInstalled('hyperpower'));
 	});
 });
 
 test.serial('install another plugin', t => {
-	return api.install('🦄').then(() => {
-		t.true(api.isInstalled('🦄'));
+	return api.install('hyperyellow').then(() => {
+		t.true(api.isInstalled('hyperyellow'));
 	});
 });
 
 test.serial('list installed plugins', t => {
 	const list = api.list();
-	t.true(list.endsWith('🦁\n🦄'));
+	t.true(list.endsWith('hyperpower\nhyperyellow'));
 });
 
 test.serial('try to install a plugin that is already installed', async t => {
-	const err = await t.throws(api.install('🦁'));
-	t.is(err, 'ALREADY_INSTALLED');
+	const err = await t.throws(api.install('hyperpower'));
+	t.is(err, 'hyperpower is already installed');
 });
 
 test.serial('uninstall a plugin', t => {
-	return api.uninstall('🦁').then(() => {
-		t.false(api.isInstalled('🦁'));
+	return api.uninstall('hyperpower').then(() => {
+		t.false(api.isInstalled('hyperpower'));
 	});
 });
 
 test.serial('uninstall another plugin', t => {
-	return api.uninstall('🦄').then(() => {
-		t.false(api.isInstalled('🦄'));
+	return api.uninstall('hyperyellow').then(() => {
+		t.false(api.isInstalled('hyperyellow'));
 	});
 });
 
 test.serial('try to unistall a plugin that is not installed', async t => {
-	const err = await t.throws(api.uninstall('🦁'));
-	t.is(err, 'NOT_INSTALLED');
+	const err = await t.throws(api.uninstall('hyperyellow'));
+	t.is(err, 'hyperyellow is not installed');
 });
