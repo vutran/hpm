@@ -33,14 +33,13 @@ npm install -g hpm-cli
 
 ## Upcoming
 - [ ] `hpm view hyperpower`
-- [ ] `hpm i hyperpower#1.0.0`
 - [ ] `hpm i hyperpower@beta`
 - [ ] `hpm u --tmp`
-- [ ] `hpm i --pin`
-- [X] `hpm fork hyperpower`
 - [ ] `hpm uninstall --local`
 - [ ] Bulk commands (e.g. `hpm i hyperpower hyperyellow`)
 - [ ] `hpm help`
+- [X] `hpm i hyperpower#1.0.0`
+- [X] `hpm fork hyperpower`
 - [x] `hpm search <query>`
 - [x] `hpm unistall <plugin>`
 - [x] `hpm ls`
