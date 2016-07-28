@@ -53,13 +53,7 @@ if (program.uninstall) {
 	const plugin = program.uninstall;
 	return api.uninstall(plugin)
 		.then(() => console.log(chalk.green(`${plugin} uninstalled successfully!`)))
-		.catch(err => {
-			if (err === 'NOT_INSTALLED') {
-				console.error(chalk.red(`${plugin} is not installed`));
-			} else {
-				throw err;
-			}
-		});
+		.catch(err => console.log(chalk.red(err)));
 }
 
 if (program.list) {
