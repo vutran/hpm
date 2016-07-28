@@ -14,7 +14,7 @@ const ora = require('ora');
 const program = require('commander');
 const updateNotifier = require('update-notifier');
 
-const hyperTerm = require('./hyperterm');
+const api = require('./api');
 const pkg = require('./package');
 
 updateNotifier({pkg}).notify();
@@ -30,7 +30,7 @@ program
 	.option('f, fork <plguin>', 'Forks a plugin from npm into your ~/.hyperterm_plugins/local')
 	.parse(process.argv);
 
-if (!hyperTerm.exists()) {
+if (!api.exists()) {
 	let msg = chalk.red('You don\'t have HyperTerm installed! :(\n');
 	msg += `${chalk.red('You are missing')} ${chalk.green('awesomeness')}`;
 	msg += chalk.red(`.\n`);
@@ -41,7 +41,7 @@ if (!hyperTerm.exists()) {
 
 if (program.install) {
 	const plugin = program.install;
-	return hyperTerm.install(plugin)
+	return api.install(plugin)
 		.then(() => console.log(chalk.green(`${plugin} installed successfully!`)))
 		.catch(err => console.error(chalk.red(err)));
 }
@@ -51,7 +51,7 @@ if (['rm', 'remove'].indexOf(program.args[0]) !== -1) {
 }
 if (program.uninstall) {
 	const plugin = program.uninstall;
-	return hyperTerm.uninstall(plugin)
+	return api.uninstall(plugin)
 		.then(() => console.log(chalk.green(`${plugin} uninstalled successfully!`)))
 		.catch(err => {
 			if (err === 'NOT_INSTALLED') {
@@ -63,7 +63,7 @@ if (program.uninstall) {
 }
 
 if (program.list) {
-	let plugins = hyperTerm.list();
+	let plugins = api.list();
 
 	if (plugins) {
 		console.log(plugins);
@@ -146,8 +146,8 @@ if (program.docs) {
 if (program.fork) {
 	const spinner = ora('Installing').start();
 	const plugin = program.fork;
-	return hyperTerm.existsOnNpm(plugin).then(() => {
-		if (hyperTerm.isInstalled(plugin, true)) {
+	return api.existsOnNpm(plugin).then(() => {
+		if (api.isInstalled(plugin, true)) {
 			spinner.stop();
 			console.error(`${chalk.red('✖')} Installing`);
 			console.error(chalk.red(`${plugin} is already installed locally`));
@@ -162,7 +162,7 @@ if (program.fork) {
 
 		execa('npm', ['i', plugin], {cwd: folderName})
 			.then(() => pify(rename)(`${folderName}/node_modules/${plugin}`, `${folderName}/${plugin}`))
-			.then(() => hyperTerm.install(plugin, true))
+			.then(() => api.install(plugin, true))
 			.then(() => {
 				spinner.stop();
 				console.log(`${chalk.green('✔')} Installing`);

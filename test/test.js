@@ -8,7 +8,7 @@ import pify from 'pify';
 
 const fileName = `${homedir()}/.hyperterm.js`;
 const fileContent = 'module.exports = {plugins: [], localPlugins:[]};';
-let api = require('../hyperterm');
+let api = require('../api');
 
 test.before(async t => {
 	if (api.exists() && !isCi) {
@@ -30,8 +30,8 @@ test.before(async t => {
 		fileName: fileContent
 	});
 
-	delete require.cache[require.resolve('../hyperterm')];
-	api = require('../hyperterm');
+	delete require.cache[require.resolve('../api')];
+	api = require('../api');
 
 	t.is(true, api.exists());
 });
